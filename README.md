@@ -10,7 +10,7 @@ This repository contains exercises and solutions for the **Advanced Biometry** c
 - **W3: Survival Analysis**  
   - **Dataset:** *ACTG320 (AIDS Clinical Trials Group 320 study)*  
   - *Description:* A randomized, double-blind, placebo-controlled study examining the effectiveness of a three-drug HIV treatment regimen. The outcome of interest is time to AIDS diagnosis or death. The dataset includes treatment type, intravenous drug use history, Karnofsky Performance Scale, age, and CD4 count.  
-  - *Suggested Reading:* [Survival Analysis: A Self-Learning Text](https://link.springer.com/book/10.1007/978-1-4757-2728-9) – David G. Kleinbaum & Mitchel Klein  
+  - *Suggested Reading:* [Survival Analysis: A Self-Learning Text](https://link.springer.com/book/10.1007/978-1-4419-6646-9) – David G. Kleinbaum & Mitchel Klein  
 - **W4: Statistical Learning**  
   - *Suggested Reading:* [An Introduction to Statistical Learning](https://www.statlearning.com/) – Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani  
 - **W5: Longitudinal Data Analysis**  
