@@ -20,6 +20,7 @@ This repository contains exercises and solutions for the **Advanced Biometry** c
 ## 📂 Repository Structure  
 The repository is organized into **weekly folders (`W1` to `W5`)**, each containing:  
 
+```
 📁 W1_Clinical_Trials/
 ├── exercises.pdf # PDF with exercises
 ├── solutions.Rmd # R script with solutions
@@ -50,7 +51,7 @@ The repository is organized into **weekly folders (`W1` to `W5`)**, each contain
 ├── solutions.pdf
 ├── data/
 │ ├── tlc_trial.csv # Lead exposure dataset
-
+```
 
 Each folder contains:  
 ✅ **Exercises (`.pdf`)** – Problems related to the topic.  
