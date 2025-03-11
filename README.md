@@ -21,37 +21,32 @@ This repository contains exercises and solutions for the **Advanced Biometry** c
 The repository is organized into **weekly folders (`W1` to `W5`)**, each containing:  
 
 📁 W1_Clinical_Trials/
-├── exercises.Rmd # R Markdown file with exercises
-├── solutions.R # R script with solutions
 ├── exercises.pdf # PDF with exercises
+├── solutions.Rmd # R script with solutions
 ├── solutions.pdf # PDF with detailed solutions
 
 📁 W2_Diagnostic_Studies/
-├── exercises.Rmd
-├── solutions.R
 ├── exercises.pdf
+├── solutions.Rmd
 ├── solutions.pdf
 ├── data/
 │ ├── lplaudio_subset.csv # Simulated audiology test dataset
 
 📁 W3_Survival_Analysis/
-├── exercises.Rmd
-├── solutions.R
 ├── exercises.pdf
+├── solutions.Rmd
 ├── solutions.pdf
 ├── data/
 │ ├── actg320.txt # AIDS Clinical Trials Group 320 dataset
 
 📁 W4_Statistical_Learning/
-├── exercises.Rmd
-├── solutions.R
 ├── exercises.pdf
+├── solutions.Rmd
 ├── solutions.pdf
 
 📁 W5_Longitudinal_Data/
-├── exercises.Rmd
-├── solutions.R
 ├── exercises.pdf
+├── solutions.Rmd
 ├── solutions.pdf
 ├── data/
 │ ├── tlc_trial.csv # Lead exposure dataset
