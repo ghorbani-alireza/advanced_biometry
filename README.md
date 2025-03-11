@@ -58,8 +58,8 @@ The repository is organized into **weekly folders (`W1` to `W5`)**, each contain
 
 
 Each folder contains:  
-✅ **Exercises (`.Rmd`, `.pdf`)** – Problems related to the topic.  
-✅ **Solutions (`.R`, `.pdf`)** – Detailed answers and explanations.  
+✅ **Exercises (`.pdf`)** – Problems related to the topic.  
+✅ **Solutions (`.Rmd`, `.pdf`)** – Detailed answers and explanations.  
 ✅ **Datasets (if applicable)** – Used for hands-on analysis.  
 
 ## 🛠 Tools & Requirements  
