@@ -17,7 +17,7 @@ This repository contains exercises and solutions for the **Advanced Biometry** c
   - **Dataset:** *TLC trial dataset (Lead exposure in US children)*  
   - *Description:* This dataset includes N=100 children aged 12-33 months with high blood lead levels, randomized to either placebo or treatment ("succimer"). Blood lead levels were measured at baseline, week 1, week 4, and week 6. The dataset is useful for analyzing repeated measures and time-dependent effects.
 - **W6: Sample Size Calculation for Clinical Trials**  
-  - *Description:* This week focuses on sample size calculation and recalculation methods for clinical trials, including cluster randomized trials. A presentation file provides an overview of the topic, and an R script demonstrates sample size calculation through a practical example.  
+  - *Description:* This week focuses on sample size calculation and recalculation methods for clinical trials. A presentation file provides an overview of the topic "cluster randomized trials", and five more topics of sample size calculation were summarized through practical examples.  
   - *Suggested Reading:* [Methods and Applications of Sample Size Calculation and Recalculation in Clinical Trials](https://link.springer.com/book/10.1007/978-3-030-49528-2) – Gernot Wassmer & Werner Brannath 
 
 ## 📂 Repository Structure  
