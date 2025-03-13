@@ -15,7 +15,10 @@ This repository contains exercises and solutions for the **Advanced Biometry** c
   - *Suggested Reading:* [An Introduction to Statistical Learning](https://www.statlearning.com/) – Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani  
 - **W5: Longitudinal Data Analysis**  
   - **Dataset:** *TLC trial dataset (Lead exposure in US children)*  
-  - *Description:* This dataset includes N=100 children aged 12-33 months with high blood lead levels, randomized to either placebo or treatment ("succimer"). Blood lead levels were measured at baseline, week 1, week 4, and week 6. The dataset is useful for analyzing repeated measures and time-dependent effects.  
+  - *Description:* This dataset includes N=100 children aged 12-33 months with high blood lead levels, randomized to either placebo or treatment ("succimer"). Blood lead levels were measured at baseline, week 1, week 4, and week 6. The dataset is useful for analyzing repeated measures and time-dependent effects.
+- **W6: Sample Size Calculation for Clinical Trials**  
+  - *Description:* This week focuses on sample size calculation and recalculation methods for clinical trials, including cluster randomized trials. A presentation file provides an overview of the topic, and an R script demonstrates sample size calculation through a practical example.  
+  - *Suggested Reading:* [Methods and Applications of Sample Size Calculation and Recalculation in Clinical Trials](https://link.springer.com/book/10.1007/978-3-030-49528-2) – Gernot Wassmer & Werner Brannath 
 
 ## 📂 Repository Structure  
 The repository is organized into **weekly folders (`W1` to `W5`)**, each containing:  
@@ -51,6 +54,12 @@ The repository is organized into **weekly folders (`W1` to `W5`)**, each contain
 ├── solutions.pdf
 ├── data/
 │ ├── tlc_trial.csv # Lead exposure dataset
+
+📁 W6_Sample_Size_Calculation/
+├── cluster_randomized.pdf # Presentation on cluster randomized trials
+├── summary.pdf # Summary of five key topics in sample size calculation
+├── summary.Rmd # R markdown for Summary of five key topics in sample size calculation
+
 ```
 
 Each folder contains:  
