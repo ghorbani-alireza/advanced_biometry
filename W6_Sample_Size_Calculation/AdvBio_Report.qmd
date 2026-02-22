@@ -1,0 +1,436 @@
+---
+title: "Homework Report"
+author: "for"
+format: 
+  pdf:
+    include-in-header:
+      text: \usepackage{graphicx}
+editor: visual
+---
+
+\begin{center}
+\vspace{0cm}
+{\Huge\bfseries Advanced Biometry II}
+
+\vspace{1cm}
+{\Large\bfseries 5 Selected Topics of the book \\ 
+``Methods and Applications of Sample Size Calculation and Recalculation in Clinical Trials''}
+
+\vspace{1.5cm}
+{\Large\bfseries Alireza Ghorbani}
+
+\vspace{0.2cm}
+{\small Master of Science in Epidemiology}
+
+\vspace{0.8cm}
+{\small Ludwig-Maximilians-Universität München}
+
+\vspace{0.4cm}
+{\small Faculty of Medicine}
+
+\vspace{0.4cm}
+{\small The Institute for Medical Information Processing, Biometry, and Epidemiology}
+
+\vspace{0.8cm}
+\includegraphics[width=8cm]{img/lmu_ibe.png}
+
+\vspace{0.5cm}
+{\small \today}
+\end{center}
+
+\newpage
+
+\renewcommand{\contentsname}{\centering Table of Contents}
+\tableofcontents
+
+\newpage
+
+# Topic 2: Superiority Trial with Normally Distributed Outcomes {#topic-2-superiority-2-groups-normally-distributed}
+
+**Chapter 3.1–3.4 (Kieser, 2020)**
+
+## 1. Clinical Context & Methodology - ChroPac Trial Example
+
+**Clinical Context**
+
+The ChroPac trial example (Diener et al., 2017) demonstrates sample size calculation for a superiority trial with normally distributed outcomes. This randomized clinical trial compared two surgical interventions for chronic pancreatitis: duodenum-preserving pancreatic head resection (DPPHR) and partial pancreatoduodenectomy (PP). The primary endpoint was quality of life measured by the EORTC QLQ-C30 physical functioning scale, which produces continuous scores ranging from 0 to 100 where higher scores indicate better functioning.
+
+**Statistical Methodology**
+
+The analysis plan specified a two-sample z-test to compare mean quality-of-life scores between treatment groups. The null hypothesis ($H_0: \mu_1 = \mu_2$) stated no difference exists between surgical approaches, while the alternative hypothesis ($H_1: \mu_1 \not= \mu_2$) stated a statistically significant difference. The study aimed to detect the minimum clinically important difference of $\delta = 10$ points assuming $\sigma = 20$mmHg with 90% power at a two-sided $\alpha = 0.05$ significance level.
+
+**Sample Size Calculation Methodology**
+
+The required sample size per group was calculated using the standard formula for comparing means between two independent groups: $$n = \frac{(1+r)^2}{r} \cdot \frac{(z_{1-\alpha/2} + z_{1-\beta})^2 \sigma^2}{\Delta_A^2}$$ where $\sigma = 20$ is standard deviation of QoL scores, $\Delta = 10$ is the clinically relevant difference, $\alpha = 0.05$ and $\beta = 0.9$ are type I/II errors and $r = n_E/n_C$ is the sample size ratio.
+
+To fulfill the assignment requirement the study's original power is changed from 90% to 95% and sample size ratio $r$ from 1 to 2.
+
+| Parameter | Original Value | Revised Value | Parameter | Original Value | Revised Value |
+|------------|------------|------------|------------|------------|------------|
+| $\sigma$  | 20 mmHg        | \-            | $\Delta$  | 10             | \-            |
+| $\alpha$  | 0.05           | \-            | $r$       | 1              | 2             |
+| $1-\beta$ | 0.9            | 0.95          |           |                |               |
+
+## 2. Code Implementation & Interpretation ($r$ & $\beta$ Modification)
+
+**R Code Implementation**
+
+```{r}
+#| label: ex3.1
+#| warning: false
+#| message: false
+
+# z-test sample size 
+samplesize_zTest <- function(delta_A, sigma, alpha, beta, r){ 
+  n <- (1+r)^2/r * (qnorm(1-alpha/2) + qnorm(1-beta))^2 *(sigma/delta_A)^2 
+  n_E <- ceiling(r/(1+r) * n) 
+  n_C <- ceiling(1/(1+r) * n) 
+  actual_r <- n_E/n_C 
+  n_total <- n_E + n_C 
+  actual_power <- pnorm(sqrt((n_E+n_C) * actual_r * delta_A^2/
+  ((1+actual_r)^2 * sigma^2)) -qnorm(1-alpha/2)) 
+return(data.frame(n_total = n_total, n_E = n_E, n_C = n_C,  
+ actual_r = actual_r, actual_power = actual_power)) 
+}
+# Original parameters (beta=0.1, r=1)
+original <- samplesize_zTest(10, 20, 0.05, 0.1, 1)
+
+# Revised parameters (beta=0.05, r=2)
+modified <- samplesize_zTest(10, 20, 0.05, 0.05, 2)
+
+results <- rbind(original, modified)
+results
+```
+
+**Interpretation**
+
+The original ChroPac trial required 85 participants per group to detect a 10-point difference with 90% power. Increasing the power to 95% and sample size ratio to 2 raised this requirement to 234 total participants (156 in the experimental group vs 78 in control). Here, the total sample size increases (from 170 to 234) due to both the higher power requirement and unequal allocation. It is also important to mention that the unequal allocation increases the experimental group size while almost keeping the control group similar to the original design.
+
+------------------------------------------------------------------------
+
+\newpage
+
+# Topic 3: Superiority Trial with Asymptotic Binary Outcomes {#topic-3-superiority-2-groups-binary-asymptotic}
+
+**Chapter 5.1–5.2 (Kieser, 2020)**
+
+## 1. Clinical Context & Methodology – Parkinson Trial Example
+
+**Clinical Context**
+
+The Parkinson trial example (Olanow et al., 2009) is a case of sample size calculation in a two-group superiority trial with binary outcomes. This study compared an active treatment against placebo in a 2:1 allocation ratio ($r=2$), where the primary endpoint was treatment response. Based on previous evidence, the researchers anticipated response rates of 30% for placebo ($p_C=0.30$) and 50% for the active treatment ($p_E=0.50$). The trial aimed to detect this 20% absolute difference with 80% power at a one-sided $\alpha=0.025$ significance level.
+
+**Statistical Methodology**
+
+The analysis plan specified a chi-square test (normal approximation) to compare response rates between groups. The null hypothesis ($H_0: p_E = p_C$) stated no treatment difference exists, while the alternative ($H_1: p_E > p_C$) reflected the expected superiority. The sample size calculation accounted for the unequal allocation ratio and used both approximate and exact methods.
+
+**Sample Size Calculation Methodology**
+
+The approximate sample size formula for binary outcomes with allocation ratio $r$ is:
+
+$$n = \frac{(1 + r)}{r} \cdot \frac{\left(z_{1 - \alpha/2}\cdot \sqrt{(1 + r)\cdot p_0 \cdot(1 - p_0)} + z_{1 - \beta} \sqrt{r \cdot p_C\cdot (1 - p_C) + p_E \cdot(1 - p_E)}\right)^2}{\Delta^2}$$
+
+where $\Delta = p_E - p_C$ is the treatment difference, $p_0 = \frac{p_C + r p_E}{1 + r}$ is the weighted average proportion, and $z_{1 - \alpha/2}$ & $z_{1 - \beta}$ are standard normal quantiles with respect to errors type I & II.
+
+The parameters are modified from the original calculation ($r=1$, 85% power) to $r=2$ (2:1 allocation) and $f=48$ months follow-up to examine their impacts on sample size requirements.
+
+| Parameter | Original Value | Revised Value | Parameter | Original Value | Revised Value |
+|------------|------------|------------|------------|------------|------------|
+| $p_C$     | 0.30           | \-            | $p_E$     | 0.50           | \-            |
+| $\alpha$  | 0.05           | 0.03          | $r$       | 2              | 3             |
+| $1-\beta$ | 0.8            | \-            | $\Delta$  | 0.20           | \-            |
+
+## 2. Code Implementation & Interpretation ($r$ & $\alpha$ Modification)
+
+**R Code Implementation**
+
+```{r}
+#| label: ex5.1
+#| warning: false
+#| message: false
+
+power_exact <- function(n_E, n_C, p_EA, p_CA, alpha) { 
+  delta_A <- p_EA - p_CA
+  i <- 0:n_C;  j <- 0:n_E
+  p_E_hat <- j / n_E;  p_C_hat <- i / n_C  
+  p_0_hat <- outer(j, i, "+") / (n_E + n_C)
+  U <- sqrt(n_C * n_E / (n_C + n_E)) * (outer(p_E_hat, p_C_hat, "-")) /
+       sqrt(p_0_hat * (1 - p_0_hat)) 
+  if (delta_A > 0) {  
+    # Large rates refer to a positive result
+    exact_power <- sum(
+      outer(dbinom(j, n_E, p_EA), dbinom(i, n_C, p_CA), "*") *
+      (U >= qnorm(1 - alpha / 2)), na.rm = TRUE) 
+  } else {  
+    # Small rates refer to a positive result
+    exact_power <- sum(
+      outer(dbinom(j, n_E, p_EA), dbinom(i, n_C, p_CA), "*") *
+      (U <= -qnorm(1 - alpha / 2)), na.rm = TRUE)}
+  return(exact_power) 
+} 
+#--------------------------------------------------#
+samplesize_chisquare <- function(p_EA, p_CA, alpha, beta, r) { 
+  p_0 <- (p_CA + r * p_EA) / (1 + r)
+  delta_A <- p_EA - p_CA 
+  n <- (1 + r) / r * (qnorm(1 - alpha / 2) * sqrt((1 + r) * (1 - p_0) * p_0) +
+       qnorm(1 - beta) * sqrt(r * p_CA * (1 - p_CA) + p_EA * (1 - p_EA)))^2 /
+    delta_A^2 
+  n_E <- ceiling(r / (1 + r) * n)
+  n_C <- ceiling(1 / (1 + r) * n) 
+  n_total <- n_E + n_C
+  actual_r <- n_E / n_C 
+  
+  actual_power <- pnorm((abs(delta_A) - (1 + actual_r) * sqrt(p_0 * (1 - p_0) /
+    (n_total * actual_r)) * qnorm(1 - alpha / 2)) / sqrt((1 + actual_r) /
+    n_total * (p_CA * (1 - p_CA) + (1 - p_EA) * p_EA /r))) 
+  exact_power <- power_exact(n_E, n_C, p_EA, p_CA, alpha) 
+  return(data.frame(
+    n_total = n_total, 
+    n_E = n_E, 
+    n_C = n_C,  
+    actual_r = actual_r, 
+    actual_power = actual_power, 
+    exact_power = exact_power))  
+} 
+#-------------------------------------------------#
+# Original parameters (alpha=0.05, r=2)
+original <- samplesize_chisquare(0.5, 0.3, 0.05, 0.2, 2)
+
+# Modified parameters (alpha=0.03, r=3) 
+modified <- samplesize_chisquare(0.5, 0.3, 0.03, 0.2, 3)
+
+# Combine and print results
+results <- rbind(original, modified)
+results
+```
+
+**Interpretation**
+
+The normal approximation formula offers a computationally efficient method for estimating sample size requirements, though it typically yields slightly conservative results compared to exact methods. In this analysis, we focus specifically on how the approximation responds to parameter modifications in the Parkinson trial example.
+
+For the original trial parameters ($r = 2$, $\alpha = 0.05$), the approximation suggested a sample size of 212 patients (141 active, 71 control) to achieve 80.4% power. When modifying the allocation ratio to $r = 3$ and adjusting the significance level to $\alpha = 0.03$, the approximation recommended 291 patients (218 active, 73 control).
+
+Here, the total sample size grew from 212 to 291 due to two factors, the stricter type I error control ($\alpha = 0.03 \to 0.05$) and the higher allocation ratio ($r = 2 \to 3$). It is also important to mention that the increase in allocation ratio increases the experimental group size while decreases the control group size; However, the impact of decrease in $\alpha$ keeps the control group size almost unchanged.
+
+------------------------------------------------------------------------
+
+\newpage
+
+# Topic 4: Superiority Trial with Exact Binary Outcomes {#topic-4-superiority-12-groups-binary-exact}
+
+**Chapter 5.3; 12 (Kieser, 2020)**
+
+## 1. Clinical Context & Methodology – Parkinson Trial Example
+
+**Clinical Context**
+
+Building upon the previous Parkinson trial example (Olanow et al., 2009) with binary outcomes, we now examine the exact sample size calculation using the Fisher-Boschloo test. This test provides an exact alternative to the chi-square test analyzed earlier, particularly valuable for smaller sample sizes or when dealing with rare events. The trial maintains the same parameters: a 2:1 allocation ratio ($r=2$) with assumed response rates of 30% for placebo ($p_C=0.30$) and 50% for active treatment ($p_E=0.50$).
+
+**Statistical Methodology**
+
+The Fisher-Boschloo test is an unconditional exact test that combines features of Fisher's exact test with a more powerful test statistic. Unlike the normal approximation method, it makes no assumptions about large sample sizes, controls type I error exactly, and typically requires iterative computation to determine sample size.
+
+**Sample Size Calculation Methodology**
+
+Since no closed-form formula exists, the sample size is found iteratively. First, starting with an initial guess (e.g., $n_E=10$, $n_C=5$). Then, the exact power for ($n_E$, $n_C$) is computed. Finally, $n_E$ and $n_C$ will be incremented while maintaining $r=2$ until power is greater than 80%.
+
+The notation is also the same as before with $r$ as the allocation ratio, $\Delta = p_E - p_C$ as the treatment difference, $p_0 = \frac{p_C + r p_E}{1 + r}$ as the weighted average proportion, and $z_{1 - \alpha/2}$ & $z_{1 - \beta}$ are standard normal quantiles.
+
+## 2. Code Implementation & Interpretation ($r$ & $\alpha$ Modification)
+
+**R Code Implementation**
+
+```{r}
+#| label: ex5.7
+#| warning: false
+#| message: false
+# Load required package
+library(binary)
+
+# Original calculation (r=2, alpha=0.025)
+original <- samplesize_exact_boschloo_NI(0.5, 0.3, 1, 0.025, 0.2, 2)
+# Modified calculation (r=3, alpha=0.015) 
+modified <- samplesize_exact_boschloo_NI(0.5, 0.3, 1, 0.015, 0.2, 3)
+
+# Combine and print results
+results <- data.frame(
+  n_total = c(original$n_E + original$n_C, modified$n_E + modified$n_C),
+  n_E = c(original$n_E, modified$n_E),
+  n_C = c(original$n_C, modified$n_C),
+  exact_power = c(original$exact_power, modified$exact_power)
+)
+results
+```
+
+**Interpretation**
+
+The exact Fisher-Boschloo test required 213 patients (142 experimental, 71 control) to achieve 80.4% power under original parameters ($r=2$, $\alpha=0.025$). When modified to stricter conditions ($r=3$, $\alpha=0.015$), sample size increased to 292 patients (219 experimental, 73 control) while maintaining comparable power (80.6%). This increase reflects both the higher allocation ratio (growing the experimental group by 54% while keeping the control group nearly stable) and stricter significance requirements. Notably, the exact method proved more efficient than Topic 3's asymptotic approach. The exact method's "efficiency" lies not only in reducing total N, but in providing mathematically rigorous results with optimal patient allocation under stricter constraints like more power, exact type I error, more balanced patient distribution, etc.
+
+------------------------------------------------------------------------
+
+\newpage
+
+# Topic 5: Superiority Trial with Time-to-Event Outcomes {#topic-5-superiority-2-groups-time-to-event}
+
+**Chapter 6 (Kieser, 2020)**
+
+## 1. Clinical Context & Methodology - Proportional Hazards Example
+
+**Clinical Context**
+
+Example 6.2 (Kieser, 2020) presents a fundamental advancement in survival analysis by introducing the proportional hazards model (Cox, 1972), which generalizes the restrictive exponential distribution assumption. This approach is particularly valuable in clinical trials where hazard rates may vary over time but maintain a constant ratio between treatment arms. Common applications include oncology trials comparing progression-free survival or cardiovascular studies examining time-to-event outcomes like myocardial infarction.
+
+**Statistical Methodology**
+
+The proportional hazards framework makes two key assumptions. First, the hazard ratio $\theta$ between groups remains constant over time: $\theta = \frac{\lambda_E(t)}{\lambda_C(t)} = \text{constant for all } t > 0$. Second, the survival functions maintain a consistent mathematical relationship: $S_E(t) = [S_C(t)]^\theta$. This formulation provides several critical advantages. It accommodates non-constant baseline hazards while preserving interpretability. It also allows valid inference without specifying the exact hazard function form. Furthermore, it maintains the exponential model's intuitive interpretation of $\theta = \frac{\text{median}_C}{\text{median}_E} = \frac{\text{mean}_C}{\text{mean}_E}$.
+
+**Sample Size Calculation Methodology**
+
+The Schoenfeld approximation provides a robust method for determining required events: $$d = \frac{(1+r)^2}{r} \cdot \frac{(z_{1-\alpha/2} + z_{1-\beta})^2}{(\ln\theta)^2}$$ Where $z_{1-\alpha/2}$ = 1.96 (for two-sided $\alpha=0.05$), $z_{1-\beta}$ = 1.04 (for 85% power), $r=n_E/n_C$ is the allocation ratio, and $\theta$ is the target hazard ratio.
+
+The total sample size further accounts for accrual period ($a$) or the time during which patients are recruited, follow-up time ($f$) which is the additional observation period after accrual, and event probability ($p_D$) computed via: $$p_D = 1 - \frac{1}{6(1+r)} \left[ e^{-\lambda_C f} + re^{-\lambda_E f} + 4(e^{-\lambda_C (a/2+f)} + re^{-\lambda_E (a/2+f)}) \right]$$ Finally, Converting required events to actual subjects: $$
+N = \left\lceil \frac{d}{p_D} \right\rceil
+$$
+
+And for group allocation we have: $$ n_E =  \frac{r}{1+r}\cdot N, n_C = \frac{1}{1+r}\cdot N $$ While the original calculation used $r=1$ (1:1 allocation) and 36-month follow-up ($f=36$), they are modified in this example.
+
+| Parameter | Original Value | Revised Value | Parameter | Original Value | Revised Value |
+|------------|------------|------------|------------|------------|------------|
+| $\theta$  | 0.769          | \-            | $\alpha$  | 0.05           | \-            |
+| $r$       | 1              | 2             | $f$       | 36 months      | 48 months     |
+| $1-\beta$ | 0.85           | \-            | $a$       | 24 months      | \-            |
+
+## 2. Code Implementation & Interpretation ($r$ & $f$ Modification)
+
+**R Code Implementation**
+
+```{r}
+#| label: ex6.2
+#| warning: false
+#| message: false
+samplesize_modified <- function(theta_A, lambda_C, a, f, alpha, beta, r){
+  # 1. Calculate required events (unchanged formula)
+  d <- (1+r)^2/r * (qnorm(1-alpha/2) + qnorm(1-beta))^2 / (log(theta_A))^2
+  # 2. Modified event probability calculation 
+  lambda_E <- lambda_C * theta_A
+  term1 <- exp(-lambda_C * f) + r*exp(-lambda_E * f)           
+  term2 <- 4*(exp(-lambda_C * (a/2 + f)) + r*exp(-lambda_E * (a/2 + f))) 
+  term3 <- exp(-lambda_C * (a + f)) + r*exp(-lambda_E * (a + f))          
+  p_D <- 1 - (term1 + term2 + term3)/(6*(1 + r))
+  # 3. Sample size with new r=2 allocation
+  n_total <- ceiling(d/p_D)
+  n_E <- ceiling(r/(1 + r) * n_total)  
+  n_C <- ceiling(1/(1 + r) * n_total) 
+  return(data.frame(
+    n_total = n_total,
+    n_E = n_E,
+    n_C = n_C,
+    events_needed = ceiling(d),
+    event_prob = p_D))
+}
+# Original (r=1, f=36)
+original <- samplesize_modified(0.769, log(2)/20, 24, 36, 0.05, 0.15, 1)
+# Modified (r=2, f=48)
+modified <- samplesize_modified(0.769, log(2)/20, 24, 48, 0.05, 0.15, 2)
+# Combine and print results
+results <- rbind(original, modified)
+results
+```
+
+**Interpretation**
+
+The Schoenfeld approximation results for the original 1:1 allocation with 36-month follow-up required 685 total participants (343 per arm) to achieve 85% power, needing observation of 521 events with an event probability of 0.76. After modifying to a 2:1 allocation and extending follow-up to 48 months, the trial requires 715 total participants (477 experimental vs. 238 control) to observe 586 events. The experimental arm's size increases substantially to maintain power under the new allocation ratio, while the control arm decreases moderately. The extended follow-up period enhances event detection sufficiently to offset much of the sample size expansion that would otherwise be needed, resulting in only a 4.4% increase in total participants despite the more demanding design parameters. This demonstrates how follow-up duration adjustments can mitigate the sample size costs of unbalanced randomization.
+
+------------------------------------------------------------------------
+
+\newpage
+
+# Topic 6: Non-Inferiority Trial (2 Groups) {#topic-6-non-inferiority-2-groups}
+
+**Chapter 8 (excluding 8.3) (Kieser, 2020)**
+
+## 1. Clinical Context & Methodology - COPD Trial Example
+
+**Clinical Context**
+
+The COPD trial (Welte et al., 2008) investigated whether a single morning dose of 24µg formoterol (experimental) was non-inferior to two 12µg doses (control) in patients with moderate-to-severe COPD. The primary endpoint was change in pre-dose $FEV_1$ after 12 weeks, with a non-inferiority margin of $\delta = 100$ ml.
+
+**Statistical Methodology**
+
+The analysis used a one-sided shifted t-test $\alpha/2 = 0.025$ with null hypothesis $H_0: \mu_E - \mu_C \leq -\delta$ (experimental treatment is inferior) and the alternative hypothesis $H_1: \mu_E - \mu_C > -\delta$ (experimental treatment is non-inferior). Also, It is assumed that $FEV_1$ changes in both arms are Normally distributed, and variance between groups to be equal ($\sigma^2_E = \sigma^2_C$). The test Statistic is as follows: $$T = \frac{(\bar{X}_E - \bar{X}_C) + \delta}{S_p\sqrt{\frac{1}{n_E} + \frac{1}{n_C}}}$$ Where $S_p$ is the pooled standard deviation, $\mu_E$ and $\mu_C$ are the group means, and $n_E$ and $n_C$ are the sample sizes per group.
+
+**Sample Size Calculation Methodology**
+
+The Guenther/Schouten approximation for unequal allocation ($r = n_E/n_C$) is:
+
+$$
+n \approx \frac{(1+r)^2}{r} \cdot \frac{(z_{1-\alpha/2} + z_{1-\beta})^2 \sigma^2}{(\delta_A + \delta)^2} + \frac{z_{1-\alpha/2}^2}{2}
+$$
+
+Where $r$ is the allocation ratio ($n_E/n_C$), $\delta_A$ is the assumed true difference (0 in non-inferiority), $\sigma$ is the pooled standard deviation, and $\alpha$ and $\beta$ are the type I/II error rates.
+
+In our modified scenario, the non-inferiority margin increased to $\sigma = 300$ mL (allowing 50% greater difference), allocation ratio altered to $r = 2$ (favoring experimental arm), and the rest of the parameters are unchanged.
+
+| Parameter | Original Value | Revised Value | Parameter | Original Value | Revised Value |
+|------------|------------|------------|------------|------------|------------|
+| $\delta$ | 100 mL | \- | $\alpha$ | 0.05 | \- |
+| $r$ | 1 (1:1) | 2 (2:1) | $1-\beta$ | 0.90 | \- |
+| $\delta_A$ | 0 | \- | $\sigma$ | 275 mL | 300 mL |
+
+## 2. Code Implementation & Interpretation ($r$ & $\sigma$ Modification)
+
+**R Code Implementation**
+
+```{r}
+samplesize_diff_GS_NI <- function(delta_A, sigma, delta, alpha, beta, r){
+ n <- (1+r)^2/r * (qnorm(1-alpha/2) + qnorm(1-beta))^2 *
+ (sigma/(delta_A+delta))^2 + (qnorm(1-alpha/2))^2/2
+ n_E <- ceiling(r/(1+r) * n)
+ n_C <- ceiling(1/(1+r) * n)
+ n_total <- n_E + n_C
+ actual_r <- n_E/n_C
+ actual_power <- pnorm(abs((delta_A+delta)/sigma) 
+*sqrt(actual_r)/(1+actual_r) 
+*sqrt(n_total - (qnorm(1-alpha/2))^2/2) - qnorm(1-alpha/2))
+ return(data.frame(n_total = n_total, n_E = n_E, n_C = n_C, 
+actual_r = actual_r, actual_power = actual_power))
+ }
+
+# Original parameters (sigma=275, r=1)
+original <- samplesize_diff_GS_NI(0, 275, 100, 0.05, 0.1, 1)
+
+# Modified parameters (sigma=300, r=2)
+modified <- samplesize_diff_GS_NI(0, 300, 100, 0.05, 0.1, 2)
+
+# Combine results
+results <- rbind(original, modified)
+results
+```
+
+**Interpretation**
+
+The sample size changes from 320 to 428 reflect direct mathematical consequences of modifying key parameters. Increasing the standard deviation ($\sigma$) from 275 mL to 300 mL amplifies the nominator's $\sigma^2$ term in the sample size formula, directly increasing the required participants to maintain power. The allocation ratio change from 1:1 to 2:1 alters the study's efficiency factor in the calculation. While the experimental arm now enrolls more patients (285 vs 160), the control group shrinks (143 vs 160), creating an asymmetric design that still preserves the target power of 90%.
+
+------------------------------------------------------------------------
+
+\newpage
+
+# References
+
+1.  **Kieser, M.** (2020). *Methods and applications of sample size calculation and recalculation in clinical trials*. Springer.
+
+\begin{center}
+\includegraphics[width=4cm]{img/book.png}
+\end{center}
+
+2.  **Cox, D. R.** (1972). Regression models and life-tables. *Journal of the Royal Statistical Society: Series B*, *34*(2), 187-220. https://doi.org/10.1111/j.2517-6161.1972.tb00899.x
+
+3.  **Diener, M. K.**, Bruckner, T., Contin, P., Halloran, C., Glanemann, M., Schlitt, H. J., Mössner, J., Kieser, M., Werner, J., Büchler, M. W., & Seiler, C. M. (2010). ChroPac-trial: Duodenum-preserving pancreatic head resection versus pancreatoduodenectomy for chronic pancreatitis. *Trials*, *11*, 47. https://doi.org/10.1186/1745-6215-11-47
+
+4.  **Kilian, S.** (2020). binary: Exact sample size calculations for binary endpoints in clinical trials (R package version 0.1.0) \[Computer software\]. https://github.com/s-kilian/binary
+
+5.  **Olanow, C. W.**, Rascol, O., Hauser, R., Feigin, P. D., Jankovic, J., Lang, A., Langston, W., Melamed, E., Poewe, W., Stocchi, F., & Tolosa, E. (2009). A double-blind, delayed-start trial of rasagiline in Parkinson's disease. *New England Journal of Medicine*, *361*(13), 1268-1278. https://doi.org/10.1056/NEJMoa0809335
+
+6.  **Welte, T.**, Metzenauer, P., & Hartmann, U. (2008). Once versus twice daily formoterol via Novolizer® for patients with moderate to severe COPD. *Pulmonary Pharmacology & Therapeutics*, *21*(1), 4-13. https://doi.org/10.1016/j.pupt.2007.08.001
+
+------------------------------------------------------------------------
