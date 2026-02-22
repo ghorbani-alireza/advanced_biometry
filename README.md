@@ -25,51 +25,50 @@ The repository is organized into **weekly folders (`W1` to `W5`)**, each contain
 
 ```
 📁 W1_Clinical_Trials/
-├── exercises.pdf # PDF with exercises
-├── solutions.Rmd # R script with solutions
-├── solutions.pdf # PDF with detailed solutions
+├── img/
+├── ClinTrials_Solutions.Rmd
+├── ClinTrials_Solutions.pdf
 
 📁 W2_Diagnostic_Studies/
-├── exercises.pdf
-├── solutions.Rmd
-├── solutions.pdf
-├── data/
-│ ├── lplaudio_subset.csv # Simulated audiology test dataset
+├── img/
+├── DiagSt_Solutions.Rmd
+├── DiagSt_Solutions.pdf
+├── lplaudio_b_subset.csv
 
 📁 W3_Survival_Analysis/
-├── exercises.pdf
-├── solutions.Rmd
-├── solutions.pdf
-├── data/
-│ ├── actg320.txt # AIDS Clinical Trials Group 320 dataset
+├── img/
+├── SurAna_Solutions.Rmd
+├── SurAna_Solutions.pdf
+├── actg320.txt
 
 📁 W4_Statistical_Learning/
-├── exercises.pdf
-├── solutions.Rmd
-├── solutions.pdf
+├── img/
+├── StaLr_Solutions.Rmd
+├── StaLr_Solutions.pdf
 
 📁 W5_Longitudinal_Data/
-├── exercises.pdf
-├── solutions.Rmd
-├── solutions.pdf
-├── data/
-│ ├── tlc_trial.csv # Lead exposure dataset
+├── dat/
+├── img/
+├── LongDat_Solutions.Rmd
+├── LongDat_Solutions.pdf
 
 📁 W6_Sample_Size_Calculation/
-├── cluster_randomized.pdf # Presentation on cluster randomized trials
-├── summary.pdf # Summary of five key topics in sample size calculation
-├── summary.Rmd # R markdown for Summary of five key topics in sample size calculation
+├── Images/
+├── img/
+├── AdvBio_Report.qmd
+├── AdvBio_Report.pdf
+├── AdvBio_seminar.pdf
 
 ```
 
 Each folder contains:  
 ✅ **Exercises (`.pdf`)** – Problems related to the topic.  
-✅ **Solutions (`.Rmd`, `.pdf`)** – Detailed answers and explanations.  
+✅ **Solutions (`.qmd`, `.Rmd`, `.pdf`)** – Detailed answers and explanations.  
 ✅ **Datasets (if applicable)** – Used for hands-on analysis.  
 
 ## 🛠 Tools & Requirements  
 - All exercises are implemented in **R**.  
-- Files are provided in `.R`, `.Rmd`, and `.pdf` formats.  
+- Files are provided in `.R`, `.Rmd`, `.qmd`, and `.pdf` formats.  
 - You will need **R and RStudio** to run the scripts.  
 
 ## 🎯 Who Can Benefit?  
